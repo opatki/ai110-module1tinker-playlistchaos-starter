@@ -12,6 +12,8 @@ from playlist_logic import (
     search_songs,
 )
 
+GENRE_OPTIONS = ["rock", "lofi", "pop", "jazz", "electronic", "ambient", "other"]
+
 
 def init_state():
     """Initialize Streamlit session state."""
@@ -25,161 +27,34 @@ def init_state():
 
 def default_songs():
     """Return a default list of songs."""
+    # (title, artist, genre, energy, tags)
+    data = [
+        ("Thunderstruck", "AC/DC", "rock", 9, ["classic", "guitar"]),
+        ("Lo-fi Rain", "DJ Calm", "lofi", 2, ["study"]),
+        ("Night Drive", "Neon Echo", "electronic", 6, ["synth"]),
+        ("Soft Piano", "Sleep Sound", "ambient", 1, ["sleep"]),
+        ("Bohemian Rhapsody", "Queen", "rock", 8, ["classic", "opera"]),
+        ("Blinding Lights", "The Weeknd", "pop", 8, ["synth", "dance"]),
+        ("Take Five", "Dave Brubeck", "jazz", 4, ["classic", "instrumental"]),
+        ("Strobe", "Deadmau5", "electronic", 7, ["progressive", "long"]),
+        ("Weightless", "Marconi Union", "ambient", 1, ["relax", "sleep"]),
+        ("Smells Like Teen Spirit", "Nirvana", "rock", 9, ["grunge", "90s"]),
+        ("Levitating", "Dua Lipa", "pop", 8, ["dance", "party"]),
+        ("So What", "Miles Davis", "jazz", 3, ["trumpet", "cool"]),
+        ("Midnight City", "M83", "electronic", 7, ["indie", "dream"]),
+        ("Gymnopedie No.1", "Erik Satie", "ambient", 1, ["piano", "calm"]),
+        ("Sweet Child O' Mine", "Guns N' Roses", "rock", 8, ["guitar", "80s"]),
+        ("Bad Guy", "Billie Eilish", "pop", 6, ["bass", "dark"]),
+        ("Fly Me to the Moon", "Frank Sinatra", "jazz", 5, ["vocal", "swing"]),
+        ("Sandstorm", "Darude", "electronic", 10, ["trance", "meme"]),
+        ("Clair de Lune", "Claude Debussy", "ambient", 2, ["piano", "classical"]),
+        ("Hotel California", "Eagles", "rock", 6, ["classic", "guitar"]),
+        ("Uptown Funk", "Mark Ronson ft. Bruno Mars", "pop", 9, ["funk", "dance"]),
+        ("Feeling Good", "Nina Simone", "jazz", 6, ["soul", "vocal"]),
+    ]
     return [
-        {
-            "title": "Thunderstruck",
-            "artist": "AC/DC",
-            "genre": "rock",
-            "energy": 9,
-            "tags": ["classic", "guitar"],
-        },
-        {
-            "title": "Lo-fi Rain",
-            "artist": "DJ Calm",
-            "genre": "lofi",
-            "energy": 2,
-            "tags": ["study"],
-        },
-        {
-            "title": "Night Drive",
-            "artist": "Neon Echo",
-            "genre": "electronic",
-            "energy": 6,
-            "tags": ["synth"],
-        },
-        {
-            "title": "Soft Piano",
-            "artist": "Sleep Sound",
-            "genre": "ambient",
-            "energy": 1,
-            "tags": ["sleep"],
-        },
-        {
-            "title": "Bohemian Rhapsody",
-            "artist": "Queen",
-            "genre": "rock",
-            "energy": 8,
-            "tags": ["classic", "opera"],
-        },
-        {
-            "title": "Blinding Lights",
-            "artist": "The Weeknd",
-            "genre": "pop",
-            "energy": 8,
-            "tags": ["synth", "dance"],
-        },
-        {
-            "title": "Take Five",
-            "artist": "Dave Brubeck",
-            "genre": "jazz",
-            "energy": 4,
-            "tags": ["classic", "instrumental"],
-        },
-        {
-            "title": "Strobe",
-            "artist": "Deadmau5",
-            "genre": "electronic",
-            "energy": 7,
-            "tags": ["progressive", "long"],
-        },
-        {
-            "title": "Weightless",
-            "artist": "Marconi Union",
-            "genre": "ambient",
-            "energy": 1,
-            "tags": ["relax", "sleep"],
-        },
-        {
-            "title": "Smells Like Teen Spirit",
-            "artist": "Nirvana",
-            "genre": "rock",
-            "energy": 9,
-            "tags": ["grunge", "90s"],
-        },
-        {
-            "title": "Levitating",
-            "artist": "Dua Lipa",
-            "genre": "pop",
-            "energy": 8,
-            "tags": ["dance", "party"],
-        },
-        {
-            "title": "So What",
-            "artist": "Miles Davis",
-            "genre": "jazz",
-            "energy": 3,
-            "tags": ["trumpet", "cool"],
-        },
-        {
-            "title": "Midnight City",
-            "artist": "M83",
-            "genre": "electronic",
-            "energy": 7,
-            "tags": ["indie", "dream"],
-        },
-        {
-            "title": "Gymnopedie No.1",
-            "artist": "Erik Satie",
-            "genre": "ambient",
-            "energy": 1,
-            "tags": ["piano", "calm"],
-        },
-        {
-            "title": "Sweet Child O' Mine",
-            "artist": "Guns N' Roses",
-            "genre": "rock",
-            "energy": 8,
-            "tags": ["guitar", "80s"],
-        },
-        {
-            "title": "Bad Guy",
-            "artist": "Billie Eilish",
-            "genre": "pop",
-            "energy": 6,
-            "tags": ["bass", "dark"],
-        },
-        {
-            "title": "Fly Me to the Moon",
-            "artist": "Frank Sinatra",
-            "genre": "jazz",
-            "energy": 5,
-            "tags": ["vocal", "swing"],
-        },
-        {
-            "title": "Sandstorm",
-            "artist": "Darude",
-            "genre": "electronic",
-            "energy": 10,
-            "tags": ["trance", "meme"],
-        },
-        {
-            "title": "Clair de Lune",
-            "artist": "Claude Debussy",
-            "genre": "ambient",
-            "energy": 2,
-            "tags": ["piano", "classical"],
-        },
-        {
-            "title": "Hotel California",
-            "artist": "Eagles",
-            "genre": "rock",
-            "energy": 6,
-            "tags": ["classic", "guitar"],
-        },
-        {
-            "title": "Uptown Funk",
-            "artist": "Mark Ronson ft. Bruno Mars",
-            "genre": "pop",
-            "energy": 9,
-            "tags": ["funk", "dance"],
-        },
-        {
-            "title": "Feeling Good",
-            "artist": "Nina Simone",
-            "genre": "jazz",
-            "energy": 6,
-            "tags": ["soul", "vocal"],
-        },
+        {"title": title, "artist": artist, "genre": genre, "energy": energy, "tags": tags}
+        for title, artist, genre, energy, tags in data
     ]
 
 
@@ -194,25 +69,23 @@ def profile_sidebar():
         value=str(profile.get("name", "")),
     )
 
-    col1, col2 = st.sidebar.columns(2)
-    with col1:
-        profile["hype_min_energy"] = st.sidebar.slider(
-            "Hype min energy",
-            min_value=1,
-            max_value=10,
-            value=int(profile.get("hype_min_energy", 7)),
-        )
-    with col2:
-        profile["chill_max_energy"] = st.sidebar.slider(
-            "Chill max energy",
-            min_value=1,
-            max_value=10,
-            value=int(profile.get("chill_max_energy", 3)),
-        )
+    # (profile key, label, default) for the two energy-threshold sliders.
+    energy_sliders = [
+        ("hype_min_energy", "Hype min energy", 7),
+        ("chill_max_energy", "Chill max energy", 3),
+    ]
+    for col, (key, label, default) in zip(st.sidebar.columns(2), energy_sliders):
+        with col:
+            profile[key] = st.sidebar.slider(
+                label,
+                min_value=1,
+                max_value=10,
+                value=int(profile.get(key, default)),
+            )
 
     profile["favorite_genre"] = st.sidebar.selectbox(
         "Favorite genre",
-        options=["rock", "lofi", "pop", "jazz", "electronic", "ambient", "other"],
+        options=GENRE_OPTIONS,
         index=0,
     )
 
@@ -232,7 +105,7 @@ def add_song_sidebar():
     artist = st.sidebar.text_input("Artist")
     genre = st.sidebar.selectbox(
         "Genre",
-        options=["rock", "lofi", "pop", "jazz", "electronic", "ambient", "other"],
+        options=GENRE_OPTIONS,
     )
     energy = st.sidebar.slider("Energy", min_value=1, max_value=10, value=5)
     tags_text = st.sidebar.text_input("Tags (comma separated)")
@@ -325,15 +198,20 @@ def stats_section(playlists):
 
     stats = compute_playlist_stats(playlists)
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Total songs", stats["total_songs"])
-    col2.metric("Hype songs", stats["hype_count"])
-    col3.metric("Chill songs", stats["chill_count"])
+    metrics = [
+        ("Total songs", stats["total_songs"]),
+        ("Hype songs", stats["hype_count"]),
+        ("Chill songs", stats["chill_count"]),
+        ("Mixed songs", stats["mixed_count"]),
+        ("Hype ratio", f"{stats['hype_ratio']:.2f}"),
+        ("Average energy", f"{stats['avg_energy']:.2f}"),
+    ]
 
-    col4, col5, col6 = st.columns(3)
-    col4.metric("Mixed songs", stats["mixed_count"])
-    col5.metric("Hype ratio", f"{stats['hype_ratio']:.2f}")
-    col6.metric("Average energy", f"{stats['avg_energy']:.2f}")
+    # Render the metrics three per row.
+    for start in range(0, len(metrics), 3):
+        row = metrics[start:start + 3]
+        for col, (label, value) in zip(st.columns(3), row):
+            col.metric(label, value)
 
     top_artist = stats["top_artist"]
     if top_artist:
@@ -391,15 +269,12 @@ def main():
     profile = st.session_state.profile
     songs = st.session_state.songs
 
-    base_playlists = build_playlists(songs, profile)
-    merged_playlists = merge_playlists(base_playlists, {})
+    playlists = merge_playlists(build_playlists(songs, profile), {})
 
-    playlist_tabs(merged_playlists)
-    st.divider()
-    lucky_section(merged_playlists)
-    st.divider()
-    stats_section(merged_playlists)
-    st.divider()
+    # Each playlist section is followed by a divider, then the history view.
+    for render_section in (playlist_tabs, lucky_section, stats_section):
+        render_section(playlists)
+        st.divider()
     history_section()
 
 
