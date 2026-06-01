@@ -28,7 +28,9 @@ def normalize_artist(artist: str) -> str:
 
 def normalize_genre(genre: str) -> str:
     """Normalize a genre name for comparisons."""
-    return genre.lower().strip()
+    if not isinstance(genre, str):
+        return ""
+    return genre.strip().lower()
 
 
 def normalize_song(raw: Song) -> Song:
@@ -61,17 +63,20 @@ def classify_song(song: Song, profile: Dict[str, object]) -> str:
     """Return a mood label given a song and user profile."""
     energy = song.get("energy", 0)
     genre = song.get("genre", "")
-    title = song.get("title", "")
+    tags = song.get("tags", [])
 
     hype_min_energy = profile.get("hype_min_energy", 7)
     chill_max_energy = profile.get("chill_max_energy", 3)
-    favorite_genre = profile.get("favorite_genre", "")
+    favorite_genre = str(profile.get("favorite_genre", "")).strip().lower()
 
     hype_keywords = ["rock", "punk", "party"]
     chill_keywords = ["lofi", "ambient", "sleep"]
 
-    is_hype_keyword = any(k in genre for k in hype_keywords)
-    is_chill_keyword = any(k in title for k in chill_keywords)
+    # Combine the mood-signal fields into one lowercased string to search.
+    keyword_text = " ".join([genre] + [str(t) for t in tags]).lower()
+
+    is_hype_keyword = any(k in keyword_text for k in hype_keywords)
+    is_chill_keyword = any(k in keyword_text for k in chill_keywords)
 
     if genre == favorite_genre or energy >= hype_min_energy or is_hype_keyword:
         return "Hype"
@@ -116,12 +121,12 @@ def compute_playlist_stats(playlists: PlaylistMap) -> Dict[str, object]:
     chill = playlists.get("Chill", [])
     mixed = playlists.get("Mixed", [])
 
-    total = len(hype)
+    total = len(all_songs)
     hype_ratio = len(hype) / total if total > 0 else 0.0
 
     avg_energy = 0.0
     if all_songs:
-        total_energy = sum(song.get("energy", 0) for song in hype)
+        total_energy = sum(song.get("energy", 0) for song in all_songs)
         avg_energy = total_energy / len(all_songs)
 
     top_artist, top_count = most_common_artist(all_songs)
@@ -168,7 +173,7 @@ def search_songs(
 
     for song in songs:
         value = str(song.get(field, "")).lower()
-        if value and value in q:
+        if q in value:
             filtered.append(song)
 
     return filtered
@@ -184,7 +189,11 @@ def lucky_pick(
     elif mode == "chill":
         songs = playlists.get("Chill", [])
     else:
-        songs = playlists.get("Hype", []) + playlists.get("Chill", [])
+        songs = (
+            playlists.get("Hype", [])
+            + playlists.get("Chill", [])
+            + playlists.get("Mixed", [])
+        )
 
     return random_choice_or_none(songs)
 
@@ -192,6 +201,9 @@ def lucky_pick(
 def random_choice_or_none(songs: List[Song]) -> Optional[Song]:
     """Return a random song or None."""
     import random
+
+    if not songs:
+        return None
 
     return random.choice(songs)
 
